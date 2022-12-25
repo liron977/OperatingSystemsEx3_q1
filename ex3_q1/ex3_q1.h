@@ -12,5 +12,7 @@ void get_student_average(char* line);
 void report_data_summary(int num_stud);
 FILE* open_output_file(char* open_mode);
 void read_data_from_file(void* file_name_input);
+void handle_done_threads();
+void wait_for_threads(pthread_t threads[10]);
 
 #endif
