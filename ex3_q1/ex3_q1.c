@@ -4,10 +4,13 @@
 struct all_students all_stud;
 pthread_mutex_t all_stud_mtx= PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t done_threads_mtx= PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t index_to_print_mtx = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t cond_mtx;
 pthread_cond_t count_done_threads;
 int done_threads = 0;
 int number_of_files = 0;
+int next_index_to_print = 0;
+int turn = 0;
 
 int main(int agrc, char* argv[]) {
   
@@ -84,9 +87,18 @@ void handle_done_threads() {
        // printf("%d done_threads\n", done_threads);
 
         pthread_cond_wait(&count_done_threads, &cond_mtx);
-       // printf("I`m wake\n% ld\n", pthread_self());
-
+  
         pthread_mutex_unlock(&cond_mtx);
+
+    }
+    while (next_index_to_print < all_stud.count)
+    {
+        int my_index = __sync_fetch_and_add(&next_index_to_print, 1);
+        while (my_index != turn);
+        print_student(my_index);
+        printf("waiting to wake % ld\n", pthread_self());
+        turn = turn + 1;
+
     }
 }
 void get_student_average(char* line) {
