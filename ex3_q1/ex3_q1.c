@@ -102,14 +102,15 @@ void handle_done_threads() {
     }
 }
 void get_student_average(char* line) {
+    char* save_ptr;
     int sum_of_grades = 0, counter = 0, grade = 0;
-    char* token = strtok(line, " ");
+    char* token = strtok_r(line, " ",&save_ptr);
     char* student_name = token;
     double avg = 0.0;
     struct student stud;
 
     while (token != NULL) {
-        token = strtok(NULL, " ");
+        token = strtok_r(NULL, " ",&save_ptr);
         if (token != NULL) {
             counter++;
             sscanf(token, "%d", &grade);
