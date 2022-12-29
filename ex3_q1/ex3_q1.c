@@ -13,19 +13,14 @@ int next_index_to_print = 0;
 int turn = 0;
 
 int main(int agrc, char* argv[]) {
-  
     pthread_t threads[MAX_FILES];
 
     divide_work(agrc,threads,argv);
- /*   number_of_files = agrc - 1;
-    for (int i = 1; i < agrc; i++) {
-        input_file_name = argv[i]; 
-        pthread_create(&threads[i - 1], NULL, read_data_from_file, (void*)input_file_name);
-    }*/
     wait_for_threads(threads);
 
     pthread_exit(NULL);
 }
+
 void divide_work(int agrc, pthread_t threads[MAX_FILES],char* argv[]) {
     number_of_files = agrc - 1;
     char* input_file_name;
@@ -35,14 +30,12 @@ void divide_work(int agrc, pthread_t threads[MAX_FILES],char* argv[]) {
         pthread_create(&threads[i - 1], NULL, read_data_from_file, (void*)input_file_name);
     }
 }
-void wait_for_threads(pthread_t threads[MAX_FILES]) {
 
+void wait_for_threads(pthread_t threads[MAX_FILES]) {
     for (int i = 0; i < number_of_files; i++) {
         pthread_join(threads[i], NULL);
     }
-    /*  for (int i = 0; i < all_stud.count; i++) {
-         print_student(i);
-     }*/
+    
     fprintf(stderr, "all %d threads terminated\n", done_threads);
     destroy();
 }
@@ -51,12 +44,9 @@ void destroy() {
     pthread_mutex_destroy(&done_threads_mtx);
     pthread_mutex_destroy(&cond_mtx);
     pthread_cond_destroy(&count_done_threads);
-
 }
 void *read_data_from_file(void *file_name_input) {
     char* file_name = (char*)file_name_input;
-    printf("%s file_name\n", file_name);
-  
     FILE* file = fopen(file_name, "r");
     char line[MAX_LINE_LENGTH];
 
@@ -98,7 +88,6 @@ void handle_done_threads() {
         print_student(my_index);
         printf("waiting to wake % ld\n", pthread_self());
         turn = turn + 1;
-
     }
 }
 void get_student_average(char* line) {
@@ -107,7 +96,7 @@ void get_student_average(char* line) {
     char* token = strtok_r(line, " ",&save_ptr);
     char* student_name = token;
     double avg = 0.0;
-    struct student stud;
+   
 
     while (token != NULL) {
         token = strtok_r(NULL, " ",&save_ptr);
@@ -119,12 +108,22 @@ void get_student_average(char* line) {
     }
 
     avg = (double)sum_of_grades / (counter);
-    strcpy(stud.name ,student_name);
+    update_avg_per_student(student_name,avg);
+
+    /*strcpy(stud.name ,student_name);
+    stud.avg_grade = avg;
+    pthread_mutex_lock(&all_stud_mtx);
+    add_to_student_arr(&stud);
+    pthread_mutex_unlock(&all_stud_mtx);*/
+ 
+}
+void update_avg_per_student(char* student_name, double avg) {
+    struct student stud;
+    strcpy(stud.name, student_name);
     stud.avg_grade = avg;
     pthread_mutex_lock(&all_stud_mtx);
     add_to_student_arr(&stud);
     pthread_mutex_unlock(&all_stud_mtx);
- 
 }
 
 
