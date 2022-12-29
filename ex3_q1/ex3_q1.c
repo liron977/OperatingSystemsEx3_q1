@@ -97,7 +97,6 @@ void get_student_average(char* line) {
     char* student_name = token;
     double avg = 0.0;
    
-
     while (token != NULL) {
         token = strtok_r(NULL, " ",&save_ptr);
         if (token != NULL) {
@@ -109,13 +108,6 @@ void get_student_average(char* line) {
 
     avg = (double)sum_of_grades / (counter);
     update_avg_per_student(student_name,avg);
-
-    /*strcpy(stud.name ,student_name);
-    stud.avg_grade = avg;
-    pthread_mutex_lock(&all_stud_mtx);
-    add_to_student_arr(&stud);
-    pthread_mutex_unlock(&all_stud_mtx);*/
- 
 }
 void update_avg_per_student(char* student_name, double avg) {
     struct student stud;
