@@ -64,7 +64,7 @@ void handle_done_threads() {
     pthread_mutex_lock(&done_threads_mtx);
     done_threads++;
     pthread_mutex_unlock(&done_threads_mtx);
-
+    int index_to_print_per_thread;
     pthread_mutex_lock(&cond_mtx);
     if (done_threads == number_of_files) {
         sort_student_arr();
@@ -83,12 +83,21 @@ void handle_done_threads() {
     }
     while (next_index_to_print < all_stud.count)
     {
+        pthread_mutex_lock(&index_to_print_mtx);
+        index_to_print_per_thread = next_index_to_print;
+        next_index_to_print++;
+        print_student(index_to_print_per_thread);
+        pthread_mutex_unlock(&index_to_print_mtx);
+        
+    }
+   /* while (next_index_to_print < all_stud.count)
+    {
         int my_index = __sync_fetch_and_add(&next_index_to_print, 1);
         while (my_index != turn);
         print_student(my_index);
         printf("waiting to wake % ld\n", pthread_self());
         turn = turn + 1;
-    }
+    }*/
 }
 void get_student_average(char* line) {
     char* save_ptr;
