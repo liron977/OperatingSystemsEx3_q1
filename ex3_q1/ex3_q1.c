@@ -81,14 +81,14 @@ void handle_done_threads() {
         pthread_mutex_unlock(&cond_mtx);
 
     }
-    while (next_index_to_print < all_stud.count)
-    {
+    while (next_index_to_print < all_stud.count) {
         pthread_mutex_lock(&index_to_print_mtx);
-        index_to_print_per_thread = next_index_to_print;
-        next_index_to_print++;
-        print_student(index_to_print_per_thread);
-        pthread_mutex_unlock(&index_to_print_mtx);
-        
+        if (next_index_to_print < all_stud.count) {
+            index_to_print_per_thread = next_index_to_print;
+            next_index_to_print++;
+            print_student(index_to_print_per_thread);
+        }
+        pthread_mutex_unlock(&index_to_print_mtx);    
     }
    /* while (next_index_to_print < all_stud.count)
     {
