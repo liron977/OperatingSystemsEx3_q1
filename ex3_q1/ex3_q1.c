@@ -5,20 +5,26 @@ struct all_students all_stud;
 pthread_mutex_t all_stud_mtx= PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t done_threads_mtx= PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t index_to_print_mtx = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t cond_mtx;
+pthread_mutex_t cond_mtx= PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t count_done_threads;
-int done_threads = 0;
-int number_of_files = 0;
-int next_index_to_print = 0;
-int turn = 0;
+int done_threads,number_of_files,next_index_to_print,turn;
 
 int main(int agrc, char* argv[]) {
     pthread_t threads[MAX_FILES];
 
+    init();
     divide_work(agrc,threads,argv);
     wait_for_threads(threads);
 
     pthread_exit(NULL);
+}
+
+void init() {
+     pthread_cond_init(&count_done_threads, NULL);
+     done_threads = 0;
+     number_of_files = 0;
+     next_index_to_print = 0;
+     turn = 0;
 }
 
 void divide_work(int agrc, pthread_t threads[MAX_FILES],char* argv[]) {
@@ -63,7 +69,7 @@ void *read_data_from_file(void *file_name_input) {
 void handle_done_threads() {
     increase_done_threads();
 
-   pthread_mutex_lock(&cond_mtx);
+    pthread_mutex_lock(&cond_mtx);
     if (done_threads == number_of_files) {
         sort_student_arr();
         pthread_cond_broadcast(&count_done_threads);

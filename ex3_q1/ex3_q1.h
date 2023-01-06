@@ -18,4 +18,5 @@ void divide_work(int agrc, pthread_t threads[MAX_FILES], char* argv[]);
 void update_avg_per_student(char* student_name, double avg);
 void threads_print_array();
 void increase_done_threads();
+void init();
 #endif
